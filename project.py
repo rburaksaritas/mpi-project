@@ -21,7 +21,3 @@ parser.add_argument("-test_file", "--test_file", dest = "test_file")
 args = parser.parse_args()
 
 read_file(args.input_file)
-for i in splitted_lines:
-    print(i)
-
-print(input_splitted)
