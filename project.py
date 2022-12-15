@@ -2,6 +2,7 @@ import argparse
 from mpi4py import MPI
 import os
 
+# Functions used in reading input for Requirement 1.
 def split_line(input_line):
     input_splitted = input_line.split()
     return input_splitted[1:len(input_splitted)-1]
@@ -18,6 +19,7 @@ comm = MPI.COMM_WORLD
 rank_count = comm.Get_size()
 rank = comm.Get_rank()
 
+# Function used in distributing data to workers for Requirement 2.
 def distribute_data():
     # Determine number of data per worker and store it in distribution list.
     distribution = []
@@ -40,6 +42,7 @@ def distribute_data():
         comm.send(splitted_lines[data_iterator:last_iterator], dest=worker_rank, tag=worker_rank)
         data_iterator+=number_of_data
 
+# Functions used in merging data for Requirement 2 and 3.
 def merge_data_master(calculated_data):
     collected_data = []
     if (rank!=0):
@@ -78,6 +81,9 @@ def merge_data_workers(calculated_data):
     
     return collected_data
 
+# TODO: Functions used in counting unigrams and bigrams.
+# TODO: Functions used in computing the conditional probabilites of bigrams.
+
 # Requirement 1
 if (rank==0):
     parser = argparse.ArgumentParser()
@@ -95,7 +101,7 @@ else:
     print("Rank {} received {} sentences.".format(rank, len(data)))
     # TODO: count unigrams and bigrams
     # TODO: add calculated data to array calculated_data to send it later
-    # modify calculated data
+    # TODO: modify calculated data defined above
 
 collected_data = []
 if (args.merge_method == "MASTER"):
