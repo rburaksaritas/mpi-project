@@ -2,6 +2,11 @@ import argparse
 from mpi4py import MPI
 import os
 
+# Initialize MPI communication
+comm = MPI.COMM_WORLD
+rank_count = comm.Get_size()
+rank = comm.Get_rank()
+
 # Functions used in reading input for Requirement 1.
 def split_line(input_line):
     input_splitted = input_line.split()
@@ -14,10 +19,6 @@ def read_file(file_name):
     for line in lines:
         input_line = split_line(line)
         splitted_lines.append(input_line)
-
-comm = MPI.COMM_WORLD
-rank_count = comm.Get_size()
-rank = comm.Get_rank()
 
 # Function used in distributing data to workers for Requirement 2.
 def distribute_data():
