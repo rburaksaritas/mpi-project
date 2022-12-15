@@ -37,10 +37,48 @@ def distribute_data():
         worker_rank = i+1
         number_of_data = distribution[i]
         last_iterator = data_iterator + number_of_data
-        comm.send(splitted_lines[data_iterator:last_iterator], dest=worker_rank, tag=worker_rank) 
-        # print("data:", data_iterator, "-", last_iterator-1, "(",number_of_data,")", "sent from", rank, "to", worker_rank)
+        comm.send(splitted_lines[data_iterator:last_iterator], dest=worker_rank, tag=worker_rank)
         data_iterator+=number_of_data
 
+def merge_data_master(calculated_data):
+    collected_data = []
+    if (rank!=0):
+        comm.send(calculated_data, dest=0, tag=rank)
+    else:
+        number_of_workers = rank_count - 1
+        # Each item in calculated_data array corresponds to total counts.
+        for i in range(number_of_workers):
+            received_data = comm.recv(source=i+1, tag=i+1)
+            for j in range(received_data):
+                collected_data[j] += received_data[j]
+    
+    return collected_data
+
+def merge_data_workers(calculated_data):
+    number_of_workers = rank_count - 1
+    last_worker = number_of_workers - 1
+    collected_data = []
+    if rank(!=0):
+        for i in range(number_of_workers):
+            previous_worker = rank-1
+            next_worker = rank+1
+            # Receives data from previous worker. First worker does not.
+            if (rank>1):
+                received_data = comm.recv(source=previous_worker, tag=previous_worker)
+                # Add received data to calculated data.
+                for j in range(received_data):
+                    calculated_data[j] += received_data[j] 
+            # Sends data to next worker. Last worker sends data to master.
+            if (rank!=last_worker):
+                comm.send(calculated_data, dest=next_worker, tag=rank)
+            else:
+                comm.send(calculated_data, dest=0, tag=rank)
+    else:
+        collected_data = comm.recv(source=last_worker, tag=last_worker)
+    
+    return collected_data
+
+# Requirement 1
 if (rank==0):
     parser = argparse.ArgumentParser()
     parser.add_argument("-input_file", "--input_file", dest = "input_file")
@@ -50,6 +88,19 @@ if (rank==0):
     read_file(args.input_file)
     distribute_data()
 
+# Requirement 2
+calculated_data = []
 else:
     data = comm.recv(source=0, tag=rank)
     print("Rank {} received {} sentences.".format(rank, len(data)))
+    # TODO: count unigrams and bigrams
+    # TODO: add calculated data to array calculated_data to send it later
+    # modify calculated data
+
+# Requirement 3
+if (args.merge_method == "MASTER"):
+    collected_data = merge_data_master(calculated_data)
+
+# Requirement 4
+elif (args.merge_method == "WORKERS")
+    collected_data = merge_data_workers(calculated_data)
