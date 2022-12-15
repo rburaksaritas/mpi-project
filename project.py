@@ -97,10 +97,15 @@ else:
     # TODO: add calculated data to array calculated_data to send it later
     # modify calculated data
 
-# Requirement 3
+collected_data = []
 if (args.merge_method == "MASTER"):
     collected_data = merge_data_master(calculated_data)
 
-# Requirement 4
+# Requirement 3
 elif (args.merge_method == "WORKERS")
     collected_data = merge_data_workers(calculated_data)
+
+# Requirement 4
+if (rank==0):
+    # TODO: compute conditional probabilites of bigrams read from input file.
+    # TODO: print bigrams and their conditional probabilities.
