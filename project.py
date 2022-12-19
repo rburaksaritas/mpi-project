@@ -98,8 +98,8 @@ def merge_data_workers(calculated_data):
     return collected_data
 
 
-#compute_unigrams_bigrams function computes frequincies of bigrams and unigrams, and records them in a dictionary.
-def compute_unigrams_bigrams(data):
+# Counts frequencies of bigrams and unigrams, and records them in a dictionary.
+def count_unigrams_bigrams(data):
     #increment_value function checks if a key exist in a dict. If so, increments value. Else, adds key to dict with value=1.
     def increment_value(key,dct):
         if key in dct:
@@ -162,7 +162,7 @@ else:
     data = comm.recv(source=0, tag=rank)
     print("Rank {} received {} sentences.".format(rank, len(data)))
     # TODO: count unigrams and bigrams
-    dct = compute_unigrams_bigrams(data)
+    dct = count_unigrams_bigrams(data)
     unigram_bigram_count = dct
     # TODO: add calculated data to array calculated_data to send it later 
 
