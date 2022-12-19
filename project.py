@@ -62,7 +62,7 @@ def merge_data_workers(calculated_data):
     number_of_workers = rank_count - 1
     last_worker = number_of_workers - 1
     collected_data = []
-    if rank(!=0):
+    if (rank!=0):
         for i in range(number_of_workers):
             previous_worker = rank-1
             next_worker = rank+1
@@ -85,6 +85,7 @@ def merge_data_workers(calculated_data):
 # TODO: Functions used in counting unigrams and bigrams.
 # TODO: Functions used in computing the conditional probabilites of bigrams.
 
+calculated_data = []
 # Requirement 1
 if (rank==0):
     parser = argparse.ArgumentParser()
@@ -96,7 +97,6 @@ if (rank==0):
     distribute_data()
 
 # Requirement 2
-calculated_data = []
 else:
     data = comm.recv(source=0, tag=rank)
     print("Rank {} received {} sentences.".format(rank, len(data)))
