@@ -52,6 +52,14 @@ def distribute_data():
 # Functions used in merging data for Requirement 2 and 3.
 def merge_data_master(calculated_data):
     collected_data = {}
+    if (rank_count==2):
+        if (rank==1):
+            comm.send(calculated_data, dest=0, tag=1)
+            return
+        elif (rank==0):
+            received_data = comm.recv(source=1, tag=1)
+            return received_data 
+
     # Workers sends their calculated data dictionary to Master.
     if (rank!=0):
         comm.send(calculated_data, dest=0, tag=rank)
@@ -74,6 +82,14 @@ def merge_data_workers(calculated_data):
     previous_worker = rank - 1
     next_worker = rank + 1
     collected_data = calculated_data
+    if (rank_count==2):
+        if (rank==1):
+            comm.send(calculated_data, dest=0, tag=1)
+            return
+        elif (rank==0):
+            received_data = comm.recv(source=1, tag=1)
+            return received_data 
+
     # Workers receive data from the previous worker and send to the next.
     if (rank==1):
         comm.send(collected_data, dest=next_worker, tag=rank)
