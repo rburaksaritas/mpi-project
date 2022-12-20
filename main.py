@@ -100,16 +100,21 @@ def count_unigrams_bigrams(data):
             dct[key] += 1
         else:
             dct[key] = 1
-
+    # dct is the dictionary that holds the frequencies of bigrams and unigrams. dct[bi/unigram] = freq(bi/unigram)
     dct = dict()
+    
+    # Traverse the sentences in the data
     for sentence in data:
         if len(sentence)==0:
             continue
         if len(sentence)==1:
             increment_value(sentence[0], dct)
             continue
-
+            
+        # Increment the value of first unigram
         increment_value(sentence[0], dct)
+        
+        # Traverse the tokens in the sentence. idx is from 0 to len(sentence)-2.
         for idx in range(len(sentence)-1):
             bigram = sentence[idx] + " " + sentence[idx+1]
             unigram = sentence[idx+1]
@@ -117,7 +122,8 @@ def count_unigrams_bigrams(data):
             increment_value(unigram, dct)  
     return dct
                
-# Takes "new technologies" and dict as arguments and returns P(technologies|new) = Freq(new technologies)/Freq(new)
+# Takes the frequency dictionary, a bigram like "new technologies" and the unigram like "new" as arguments and returns:
+# P(technologies|new) = Freq(new technologies)/Freq(new)
 def compute_conditional_probability(unigram_bigram_count, bigram, unigram):
     count_bigram = 0
     count_unigram = 0
