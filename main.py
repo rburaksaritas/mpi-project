@@ -71,28 +71,24 @@ def merge_data_master(calculated_data):
 
 def merge_data_workers(calculated_data):
     number_of_workers = rank_count - 1
-    last_worker = number_of_workers - 1
-    collected_data = {}
+    last_worker = number_of_workers
+    previous_worker = rank - 1
+    next_worker = rank + 1
+    collected_data = calculated_data
     # Workers receive data from the previous worker and send to the next.
-    if (rank!=0):
-        previous_worker = rank-1
-        next_worker = rank+1
-        # Receives data from previous worker. First worker does not.
-        if (rank>1):
-            received_data = comm.recv(source=previous_worker, tag=previous_worker)
-            # Add received data to calculated data.
-            for key in received_data:
-                if key in collected_data:
-                    collected_data[key]+=received_data[key]
-                else:
-                    collected_data[key]=received_data[key]
-        # Workers sends data to next worker.
+    if (rank==1):
+        comm.send(collected_data, dest=next_worker, tag=rank)
+    elif (rank>1):
+        received_data = comm.recv(source=previous_worker, tag=previous_worker)
+        for key in received_data:
+            if key in collected_data:
+                collected_data[key]+=received_data[key]
+            else:
+                collected_data[key]=received_data[key]
         if (rank!=last_worker):
-            comm.send(calculated_data, dest=next_worker, tag=rank)
-        # Last worker sends to the Master.
+            comm.send(collected_data, dest=next_worker, tag=rank)
         else:
-            comm.send(calculated_data, dest=0, tag=rank)
-    # Master receives data from last worker.
+            comm.send(collected_data, dest=0, tag=rank)
     else:
         collected_data = comm.recv(source=last_worker, tag=last_worker)
     return collected_data
