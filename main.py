@@ -177,9 +177,7 @@ else:
     merge_method = comm.recv(source=0, tag=0)
     data = comm.recv(source=0, tag=rank)
     print("Rank {} received {} sentences.".format(rank, len(data)))
-    # TODO: count unigrams and bigrams
     unigram_bigram_count = count_unigrams_bigrams(data)
-    # TODO: add calculated data to array calculated_data to send it later 
 
 # Requirement 3
 if(merge_method=="MASTER"):
