@@ -21,8 +21,7 @@ def split_line(input_line):
 splitted_lines = []
 def read_file(file_name):
     input_file = open(file_name, "r")
-    lines = input_file.readlines()
-    for line in lines:
+    for line in input_file:
         input_line = split_line(line)
         splitted_lines.append(input_line)
 
@@ -117,16 +116,21 @@ def count_unigrams_bigrams(data):
             dct[key] += 1
         else:
             dct[key] = 1
-
+    # dct is the dictionary that holds the frequencies of bigrams and unigrams. dct[bi/unigram] = freq(bi/unigram)
     dct = dict()
+    
+    # Traverse the sentences in the data
     for sentence in data:
         if len(sentence)==0:
             continue
         if len(sentence)==1:
             increment_value(sentence[0], dct)
             continue
-
+            
+        # Increment the value of first unigram
         increment_value(sentence[0], dct)
+        
+        # Traverse the tokens in the sentence. idx is from 0 to len(sentence)-2.
         for idx in range(len(sentence)-1):
             bigram = sentence[idx] + " " + sentence[idx+1]
             unigram = sentence[idx+1]
@@ -134,7 +138,8 @@ def count_unigrams_bigrams(data):
             increment_value(unigram, dct)  
     return dct
                
-# Takes "new technologies" and dict as arguments and returns P(technologies|new) = Freq(new technologies)/Freq(new)
+# Takes the frequency dictionary, a bigram like "new technologies" and the unigram like "new" as arguments and returns:
+# P(technologies|new) = Freq(new technologies)/Freq(new)
 def compute_conditional_probability(unigram_bigram_count, bigram, unigram):
     count_bigram = 0
     count_unigram = 0
@@ -173,8 +178,7 @@ else:
     data = comm.recv(source=0, tag=rank)
     print("Rank {} received {} sentences.".format(rank, len(data)))
     # TODO: count unigrams and bigrams
-    dct = count_unigrams_bigrams(data)
-    unigram_bigram_count = dct
+    unigram_bigram_count = count_unigrams_bigrams(data)
     # TODO: add calculated data to array calculated_data to send it later 
 
 # Requirement 3
