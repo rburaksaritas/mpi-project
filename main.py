@@ -5,9 +5,8 @@ Compile Status: Compiling
 Program Status: Working
 Notes: 
 """
-import argparse
 from mpi4py import MPI
-import os
+import sys
 
 # Initialize MPI communication
 comm = MPI.COMM_WORLD
@@ -129,26 +128,26 @@ def compute_conditional_probability(unigram_bigram_count, bigram, unigram):
         count_unigram = unigram_bigram_count[unigram]
     return count_bigram/count_unigram
 
+input_file = ""
 merge_method = ""
 test_file = ""
 unigram_bigram_count = {}
 
 # Requirement 1
 if (rank==0):
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-input_file", "--input_file", dest = "input_file")
-    parser.add_argument("-merge_method", "--merge_method", dest = "merge_method")
-    parser.add_argument("-test_file", "--test_file", dest = "test_file")
-    args = parser.parse_args()
-    merge_method = args.merge_method
-    test_file = args.test_file
+    if(sys.argv[1]=="--input_file"):
+        input_file = sys.argv[2]
+    if(sys.argv[3]=="--merge_method"):
+        merge_method = sys.argv[4]
+    if(sys.argv[5]=="--test_file"):
+        test_file = sys.argv[6]
     # Send data to workers of the merge method.
     number_of_workers = rank_count - 1
     for i in range(number_of_workers):
         worker_rank = i+1
         comm.send(merge_method, dest=worker_rank, tag=0)
     # Read input file.
-    read_file(args.input_file)
+    read_file(input_file)
     # Distribute the lists of sentences to workers.
     distribute_data()
 
