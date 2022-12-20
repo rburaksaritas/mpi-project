@@ -21,8 +21,7 @@ def split_line(input_line):
 splitted_lines = []
 def read_file(file_name):
     input_file = open(file_name, "r")
-    lines = input_file.readlines()
-    for line in lines:
+    for line in input_file:
         input_line = split_line(line)
         splitted_lines.append(input_line)
 
@@ -157,8 +156,7 @@ else:
     data = comm.recv(source=0, tag=rank)
     print("Rank {} received {} sentences.".format(rank, len(data)))
     # TODO: count unigrams and bigrams
-    dct = count_unigrams_bigrams(data)
-    unigram_bigram_count = dct
+    unigram_bigram_count = count_unigrams_bigrams(data)
     # TODO: add calculated data to array calculated_data to send it later 
 
 # Requirement 3
